@@ -14,11 +14,11 @@ class XwzbcSpider(scrapy.Spider):
     start_urls = ['http://weixin.sogou.com/']
 
     def parse(self, response):
-        import time
-        today = time.strftime('%Y-%m-%d', time.localtime())
-        f = open('xwzbc_' + today + '.html', 'w')
-        f.write(response.text)
-        f.close()
+        # import time
+        # today = time.strftime('%Y-%m-%d', time.localtime())
+        # f = open('xwzbc_' + today + '.html', 'w')
+        # f.write(response.text)
+        # f.close()
         yield {'text': response.text}
 
     search_url = 'https://weixin.sogou.com/'

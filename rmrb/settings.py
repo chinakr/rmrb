@@ -14,7 +14,6 @@ BOT_NAME = 'rmrb'
 SPIDER_MODULES = ['rmrb.spiders']
 NEWSPIDER_MODULE = 'rmrb.spiders'
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'rmrb (+http://www.yourdomain.com)'
 import random
@@ -88,9 +87,10 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'rmrb.pipelines.RmrbPipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'rmrb.pipelines.CleaningPipeline': 100,
+   #'rmrb.pipelines.RmrbPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -127,3 +127,6 @@ DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 SPIDER_MIDDLEWARES = {
     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
 }
+
+# Custom exporter
+FEED_EXPORTERS = {'html': 'rmrb.exporters.HtmlItemExporter'}
