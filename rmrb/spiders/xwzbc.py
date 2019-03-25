@@ -39,10 +39,10 @@ class XwzbcSpider(scrapy.Spider):
     def parse_rmrbwx(self, response):
         if 'rmrbwx' in response.text:
             rmrbwx_url = response.xpath('//label[contains(text(), "rmrbwx")]/../../p/a/@href').extract_first()
-            yield SplashRequest(rmrbwx_url, callback=self.parse_xwzbc)
+            rmrbwx_url = response.urljoin(rmrbwx_url)
+            yield SplashRequest(rmrbwx_url, callback=self.parse_xwzbc, args={'wait': 1.0})
 
     def parse_xwzbc(self, response):
         hrefs = response.xpath('//h4[contains(text(), "新闻早班车")]/@hrefs') .extract_first()
         xwzbc_url = response.urljoin(hrefs)
-        #yield {'url': xwzbc_url}
-        yield SplashRequest(xwzbc_url, callback=self.parse)
+        yield SplashRequest(xwzbc_url, callback=self.parse, args={'wait': 1.0})
