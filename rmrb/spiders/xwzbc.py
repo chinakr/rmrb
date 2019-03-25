@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import time
 from scrapy.http import Request, FormRequest
 from scrapy_splash import SplashRequest
 
@@ -19,7 +20,8 @@ class XwzbcSpider(scrapy.Spider):
         # f = open('xwzbc_' + today + '.html', 'w')
         # f.write(response.text)
         # f.close()
-        yield {'text': response.text}
+        today = time.strftime('%Y-%m-%d', time.localtime())
+        yield {'pdate': today, 'text': response.text}
 
     search_url = 'https://weixin.sogou.com/'
 

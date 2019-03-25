@@ -6,6 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import re
+import sqlite3
 
 class RmrbPipeline(object):
     def process_item(self, item, spider):
@@ -28,5 +29,34 @@ class CleaningPipeline(object):
         text = re.sub(r'\n+', '\n', text)
 
         item['text'] = text
+
+        return item
+
+class IntoSqlitePipeline(object):
+    """Save crawled data into SQLite 3 database."""
+
+    def open_spider(self, spider):
+        db = spider.settings.get('SQLITE_DB_NAME', 'news.db')
+        self.conn = sqlite3.connect(db)
+        self.cur = self.conn.cursor()
+
+    def close_spider(self, spider):
+        self.conn.commit()
+        self.conn.close()
+
+    def process_item(self, item, spider):
+        sql = """CREATE TABLE IF NOT EXISTS news (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            pdate DATETIME NOT NULL UNIQUE,
+            text TEXT NOT NULL
+        );"""
+        self.cur.execute(sql)
+        values = (
+            None,
+            item['pdate'],
+            item['text'],
+        )
+        sql = 'INSERT OR REPLACE INTO news VALUES (?,?,?);'
+        self.cur.execute(sql, values)
 
         return item

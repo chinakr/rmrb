@@ -89,6 +89,7 @@ ROBOTSTXT_OBEY = False
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'rmrb.pipelines.CleaningPipeline': 100,
+    'rmrb.pipelines.IntoSqlitePipeline': 200,
    #'rmrb.pipelines.RmrbPipeline': 300,
 }
 
@@ -130,3 +131,6 @@ SPIDER_MIDDLEWARES = {
 
 # Custom exporter
 FEED_EXPORTERS = {'html': 'rmrb.exporters.HtmlItemExporter'}
+
+# SQLite 3 database filename
+SQLITE_DB_NAME = 'news.db'
