@@ -2,6 +2,7 @@
 import scrapy
 import time
 from scrapy.http import Request, FormRequest
+from scrapy.selector import Selector
 from scrapy_splash import SplashRequest
 
 # 打开搜狗微信公众号搜索引擎(Request)
@@ -40,9 +41,17 @@ class XwzbcSpider(scrapy.Spider):
         if 'rmrbwx' in response.text:
             rmrbwx_url = response.xpath('//label[contains(text(), "rmrbwx")]/../../p/a/@href').extract_first()
             rmrbwx_url = response.urljoin(rmrbwx_url)
-            yield SplashRequest(rmrbwx_url, callback=self.parse_xwzbc, args={'wait': 1.0})
+            yield Request(rmrbwx_url, callback=self.parse_rmrbwx2)
+
+    # 在改版后的搜狗微信搜索中，“人民日报”微信公众号的URL地址是通过
+    # window.location.replace(url)
+    # 生成的，因此需要通过正则表达式来提取
+    def parse_rmrbwx2(self, response):
+            sel = Selector(response)
+            rmrbwx_url = sel.re(r"url \+= '([\s\S]+?)'")[0]
+            yield SplashRequest(rmrbwx_url, callback=self.parse_xwzbc, args={'wait': 0.5})
 
     def parse_xwzbc(self, response):
         hrefs = response.xpath('//h4[contains(text(), "新闻早班车")]/@hrefs') .extract_first()
         xwzbc_url = response.urljoin(hrefs)
-        yield SplashRequest(xwzbc_url, callback=self.parse, args={'wait': 1.0})
+        yield SplashRequest(xwzbc_url, callback=self.parse, args={'wait': 0.5})
